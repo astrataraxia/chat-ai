@@ -3,9 +3,9 @@ package com.example.tinderaibackend;
 import com.example.tinderaibackend.conversations.entity.ChatMessage;
 import com.example.tinderaibackend.conversations.entity.Conversation;
 import com.example.tinderaibackend.conversations.repository.ConversationRepository;
-import com.example.tinderaibackend.profiles.Gender;
-import com.example.tinderaibackend.profiles.Profile;
-import com.example.tinderaibackend.profiles.ProfileRepository;
+import com.example.tinderaibackend.profiles.entitiy.enums.Gender;
+import com.example.tinderaibackend.profiles.entitiy.Profile;
+import com.example.tinderaibackend.profiles.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,10 +29,26 @@ public class TinderAiBackendApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+
+		profileRepository.deleteAll();
+		conversationRepository.deleteAll();
+
 		Profile profile = new Profile(
 				"1",
 				"Kousic",
 				"Kourth",
+				33,
+				"Korean",
+				Gender.MALE,
+				"Software Programmer",
+				"foo.jpg",
+				"ISTJ"
+		);
+		profileRepository.save(profile);
+		profile = new Profile(
+				"2",
+				"kim",
+				"seungyong",
 				33,
 				"Korean",
 				Gender.MALE,

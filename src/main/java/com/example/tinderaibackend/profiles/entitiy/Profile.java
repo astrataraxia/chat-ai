@@ -1,4 +1,6 @@
-package com.example.tinderaibackend.profiles;
+package com.example.tinderaibackend.profiles.entitiy;
+
+import com.example.tinderaibackend.profiles.entitiy.enums.Gender;
 
 public record Profile(
         String id,
