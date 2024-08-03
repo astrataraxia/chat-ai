@@ -5,13 +5,13 @@ import com.example.tinderaibackend.conversations.entity.Conversation;
 
 import java.util.List;
 
-public record CreateConversationResponse(
+public record ConversationResponse(
         String id,
         String profileId,
         List<ChatMessage> messages
 ) {
 
-    public static CreateConversationResponse from(Conversation conversation) {
-        return new CreateConversationResponse(conversation.id(), conversation.profileId(), conversation.messages());
+    public static ConversationResponse from(Conversation conversation) {
+        return new ConversationResponse(conversation.id(), conversation.profileId(), conversation.messages());
     }
 }
