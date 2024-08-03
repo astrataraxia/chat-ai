@@ -23,12 +23,12 @@ public class ConversationService {
     private final ConversationRepository conversationRepository;
     private final ProfileRepository profileRepository;
 
-    public ConversationResponse newConversation(CreateConversationRequest request) {
-        validateProfile(request.profileId());
+    public ConversationResponse createNewConversation(CreateConversationRequest request) {
+        Profile profile = validateProfile(request.profileId());
 
         Conversation conversation = new Conversation(
                 NanoIdUtils.randomNanoId(),
-                request.profileId(),
+                profile.id(),
                 new ArrayList<>()
         );
 
@@ -45,9 +45,14 @@ public class ConversationService {
                 chatMessage.messageText(),
                 chatMessage.authorId(),
                 LocalDateTime.now());
-
         conversation.messages().add(messageWithTime);
+
         return ConversationResponse.from(conversationRepository.save(conversation));
+    }
+
+    public ConversationResponse addConversation(String conversationId) {
+        Conversation conversation = validateConversation(conversationId);
+        return ConversationResponse.from(conversation);
     }
 
     private Conversation validateConversation(String conversationId) {

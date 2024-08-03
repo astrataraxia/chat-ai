@@ -17,12 +17,18 @@ public class ConversationController {
     @PostMapping("/conversations")
     @ResponseStatus(HttpStatus.CREATED)
     public ConversationResponse createNewConversation(@RequestBody CreateConversationRequest request) {
-        return conversationService.newConversation(request);
+        return conversationService.createNewConversation(request);
+    }
+
+    @GetMapping("/conversations/{conversationId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ConversationResponse getConversation(@PathVariable("conversationId") String conversationId){
+        return conversationService.addConversation(conversationId);
     }
 
     @PostMapping("/conversations/{conversationId}")
     @ResponseStatus(HttpStatus.OK)
-    public ConversationResponse addMessage(
+    public ConversationResponse addMessageToConversation(
             @PathVariable("conversationId") String conversationId,
             @RequestBody ChatMessage message) {
         return conversationService.addMessageToConversation(conversationId, message);
