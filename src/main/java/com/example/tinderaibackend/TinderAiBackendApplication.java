@@ -6,6 +6,9 @@ import com.example.tinderaibackend.conversations.repository.ConversationReposito
 import com.example.tinderaibackend.profiles.entitiy.enums.Gender;
 import com.example.tinderaibackend.profiles.entitiy.Profile;
 import com.example.tinderaibackend.profiles.repository.ProfileRepository;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -17,12 +20,6 @@ import java.util.List;
 @SpringBootApplication
 public class TinderAiBackendApplication implements CommandLineRunner {
 
-	@Autowired
-	private ProfileRepository profileRepository;
-
-	@Autowired
-	private ConversationRepository conversationRepository;
-
 	public static void main(String[] args) {
 		SpringApplication.run(TinderAiBackendApplication.class, args);
 	}
@@ -30,41 +27,5 @@ public class TinderAiBackendApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		profileRepository.deleteAll();
-		conversationRepository.deleteAll();
-
-		Profile profile = new Profile(
-				"1",
-				"Kousic",
-				"Kourth",
-				33,
-				"Korean",
-				Gender.MALE,
-				"Software Programmer",
-				"foo.jpg",
-				"ISTJ"
-		);
-		profileRepository.save(profile);
-		profile = new Profile(
-				"2",
-				"kim",
-				"seungyong",
-				33,
-				"Korean",
-				Gender.MALE,
-				"Software Programmer",
-				"foo.jpg",
-				"ISTJ"
-		);
-		profileRepository.save(profile);
-		profileRepository.findAll().forEach(System.out::println);
-
-		Conversation conversation = new Conversation(
-				"1",
-				profile.id(),
-				List.of(new ChatMessage("Hello", profile.id(), LocalDateTime.now())));
-
-		conversationRepository.save(conversation);
-		conversationRepository.findAll().forEach(System.out::println);
 	}
 }

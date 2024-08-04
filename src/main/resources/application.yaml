@@ -3,4 +3,13 @@ spring:
     name: tinder-ai-backend
   ai:
     openai:
-      api-key: ${SPRING_AI_OPENAI_API_KEY}
+      api-key: ${SPRING_AI_GROQ_API_KEY}
+      base-url: https://api.groq.com/openai
+      chat:
+        options:
+          model: llama-3.1-70b-versatile
+          temperature: 0.7
+
+tinderai:
+  character:
+    user: {id:'user', firstName:'kim', lastName:'seungyong', age:33, ethnicity:'Asian', gender:'MALE', bio:'Software engineer, I like reading and making things.', imageUrl:'', myersBriggsPersonalityType:'ISTJ'}
