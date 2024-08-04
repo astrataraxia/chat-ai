@@ -2,10 +2,12 @@ package com.example.tinderaibackend.profiles.service;
 
 import com.example.tinderaibackend.profiles.entitiy.Profile;
 import com.example.tinderaibackend.profiles.entitiy.enums.Gender;
+import com.example.tinderaibackend.profiles.properties.UserProfileProperties;
 import com.example.tinderaibackend.profiles.repository.ProfileRepository;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.soundicly.jnanoidenhanced.jnanoid.NanoIdUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -27,7 +29,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
@@ -35,6 +36,7 @@ import static com.example.tinderaibackend.profiles.Utils.generateMyersBriggsType
 import static com.example.tinderaibackend.profiles.Utils.selfieTypes;
 
 @Service
+@Slf4j
 public class ProfileCreationService {
 
     private static final String STABLE_DIFFUSION_URL = "https://fe97a6a77c5448ab52.gradio.live/sdapi/v1/txt2img";
@@ -50,15 +52,16 @@ public class ProfileCreationService {
     private Boolean initializeProfiles;
     @Value("${tinderai.lookingForGender}")
     private String lookingForGender;
-    @Value("#{${tinderai.character.user}}")
-    private Map<String, String> userProfileProperties;
 
+    private final UserProfileProperties userProfileProperties;
 
-
-    public ProfileCreationService(OpenAiChatModel chatModel, ProfileRepository profileRepository) {
+    public ProfileCreationService(OpenAiChatModel chatModel,
+                                  ProfileRepository profileRepository,
+                                  UserProfileProperties userProfileProperties) {
         this.chatModel = chatModel;
         this.profileRepository = profileRepository;
         this.httpClient = HttpClient.newHttpClient();
+        this.userProfileProperties = userProfileProperties;
         this.stableDiffusionRequestBuilder = HttpRequest.newBuilder()
                 .setHeader("Content-type", "application/json")
                 .uri(URI.create(STABLE_DIFFUSION_URL));
@@ -88,11 +91,11 @@ public class ProfileCreationService {
             String personalityType = getRandomElement(myersBriggsPersonalityTypes);
 
             String prompt = STR."Create a Tinder profile persona of an \{personalityType} \{age} year old \{ethnicity} \{gender}  including the first name, last name, Myers Briggs Personality type and a tinder bio. Save the profile using the saveProfile function";
-            System.out.println(prompt);
+            log.info(prompt);
             //      Make a call to OpenAI to generate a sample Tinder profile for these variables
             ChatResponse response = chatModel.call(new Prompt(prompt,
                     OpenAiChatOptions.builder().withFunction("saveProfile").build()));
-            System.out.println(response.getResult().getOutput().getContent());
+            log.info(response.getResult().getOutput().getContent());
 
         }
         // Save the values in a JSON file
@@ -144,7 +147,7 @@ public class ProfileCreationService {
         String jsonString = STR."""
         { "prompt": "\{prompt}", "negative_prompt": "\{negativePrompt}", "steps":40 }
         """;
-        System.out.println(STR."Creating image for \{profile.firstName()} \{profile.lastName()}(\{profile.ethnicity()})");
+        log.info(STR."Creating image for \{profile.firstName()} \{profile.lastName()}(\{profile.ethnicity()})");
 
         // Make a POST request to the Stable diffusion URL
         HttpRequest httpRequest = this.stableDiffusionRequestBuilder.POST(
@@ -194,8 +197,8 @@ public class ProfileCreationService {
     @Description("Save the Tinder profile information")
     public Function<Profile, Boolean> saveProfile() {
         return (Profile profile) -> {
-            System.out.println("This is the function that we expect to be called by Spring AI by looking at the OpenAI response");
-            System.out.println(profile);
+            log.info("This is the function that we expect to be called by Spring AI by looking at the OpenAI response");
+            log.info("{}", profile);
             this.generatedProfiles.add(profile);
             return true;
         };
@@ -215,17 +218,17 @@ public class ProfileCreationService {
             throw new RuntimeException(e);
         }
         Profile profile = new Profile(
-                userProfileProperties.get("id"),
-                userProfileProperties.get("firstName"),
-                userProfileProperties.get("lastName"),
-                Integer.parseInt(userProfileProperties.get("age")),
-                userProfileProperties.get("ethnicity"),
-                Gender.valueOf(userProfileProperties.get("gender")),
-                userProfileProperties.get("bio"),
-                userProfileProperties.get("imageUrl"),
-                userProfileProperties.get("myersBriggsPersonalityType")
+                userProfileProperties.getId(),
+                userProfileProperties.getFirstName(),
+                userProfileProperties.getLastName(),
+                userProfileProperties.getAge(),
+                userProfileProperties.getEthnicity(),
+                Gender.valueOf(userProfileProperties.getGender()),
+                userProfileProperties.getBio(),
+                userProfileProperties.getImageUrl(),
+                userProfileProperties.getMyersBriggsPersonalityType()
         );
-        System.out.println(userProfileProperties);
+        log.info("{}",userProfileProperties);
         profileRepository.save(profile);
     }
 }

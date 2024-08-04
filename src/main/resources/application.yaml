@@ -10,6 +10,19 @@ spring:
           model: llama-3.1-70b-versatile
           temperature: 0.7
 
+startup-actions:
+  initializeProfiles: true
+
 tinderai:
   character:
-    user: {id:'user', firstName:'kim', lastName:'seungyong', age:33, ethnicity:'Asian', gender:'MALE', bio:'Software engineer, I like reading and making things.', imageUrl:'', myersBriggsPersonalityType:'ISTJ'}
+    user:
+      id: "user"
+      firstName: "cho"
+      lastName: "long"
+      age: 33
+      ethnicity: "Asian"
+      gender: "MALE"
+      bio: "Software engineer, I like reading and making things."
+      imageUrl: ""
+      myersBriggsPersonalityType: "ISTJ"
+  lookingForGender: woman
