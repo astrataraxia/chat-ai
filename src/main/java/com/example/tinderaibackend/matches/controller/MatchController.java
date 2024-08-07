@@ -15,12 +15,14 @@ public class MatchController {
 
     private final MatchService matchService;
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/matches")
     @ResponseStatus(HttpStatus.CREATED)
     public MatchResponse createNewMatch(@RequestBody CreateMatchRequest request) {
         return matchService.createNewMatch(request);
     }
 
+    @CrossOrigin(origins = "*")
     @GetMapping("/matches")
     @ResponseStatus(HttpStatus.OK)
     public List<MatchResponse> getAllMatches() {

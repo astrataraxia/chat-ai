@@ -14,18 +14,21 @@ public class ConversationController {
 
     private final ConversationService conversationService;
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/conversations")
     @ResponseStatus(HttpStatus.CREATED)
     public ConversationResponse createNewConversation(@RequestBody CreateConversationRequest request) {
         return conversationService.createNewConversation(request);
     }
 
+    @CrossOrigin(origins = "*")
     @GetMapping("/conversations/{conversationId}")
     @ResponseStatus(HttpStatus.OK)
     public ConversationResponse getConversation(@PathVariable("conversationId") String conversationId){
         return conversationService.addConversation(conversationId);
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/conversations/{conversationId}")
     @ResponseStatus(HttpStatus.OK)
     public ConversationResponse addMessageToConversation(
